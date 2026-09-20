@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 import pandas as pd
 import os
+import math
 
 from utils.lstm_predictor import (
     predict_lstm_demand,
@@ -18,24 +19,260 @@ DATA_PATH = os.path.join(
 )
 
 
-# ==========================================
-# LOAD DATA
-# ==========================================
+# ============================================================
+# DATA LOADING
+# ============================================================
 
 def load_data():
-
     data = pd.read_csv(DATA_PATH)
 
     data["date"] = pd.to_datetime(
-        data["date"]
+        data["date"],
+        errors="coerce"
     )
+
+    data["sku_id"] = data["sku_id"].astype(str)
 
     return data
 
 
-# ==========================================
-# HOME PAGE
-# ==========================================
+# ============================================================
+# INVENTORY INTELLIGENCE
+# ============================================================
+
+def calculate_inventory_intelligence(
+    sku_data,
+    predicted_units,
+    lead_time_days=7,
+    safety_factor=1.65
+):
+
+    sku_data = sku_data.sort_values("date").copy()
+
+    rolling_mean_7 = (
+        sku_data["units_sold"]
+        .tail(7)
+        .mean()
+    )
+
+    rolling_mean_30 = (
+        sku_data["units_sold"]
+        .tail(30)
+        .mean()
+    )
+
+    rolling_std_7 = (
+        sku_data["units_sold"]
+        .tail(7)
+        .std()
+    )
+
+    if pd.isna(rolling_std_7):
+        rolling_std_7 = 0.0
+
+    if rolling_mean_7 <= 0:
+        rolling_mean_7 = 0.01
+
+    if rolling_mean_30 <= 0:
+        rolling_mean_30 = 0.01
+
+    demand_change_pct = (
+        (rolling_mean_7 - rolling_mean_30)
+        / rolling_mean_30
+    ) * 100
+
+    forecast_vs_recent_pct = (
+        (predicted_units - rolling_mean_7)
+        / rolling_mean_7
+    ) * 100
+
+    if demand_change_pct > 10:
+        demand_trend = "Increasing"
+    elif demand_change_pct < -10:
+        demand_trend = "Decreasing"
+    else:
+        demand_trend = "Stable"
+
+    if forecast_vs_recent_pct > 20:
+        demand_pressure = "High"
+    elif forecast_vs_recent_pct > 10:
+        demand_pressure = "Elevated"
+    elif forecast_vs_recent_pct < -20:
+        demand_pressure = "Low"
+    else:
+        demand_pressure = "Normal"
+
+    lead_time_demand = (
+        predicted_units * lead_time_days
+    )
+
+    safety_stock = (
+        rolling_std_7
+        * safety_factor
+        * math.sqrt(lead_time_days)
+    )
+
+    recommended_inventory_target = (
+        lead_time_demand
+        + safety_stock
+    )
+
+    volatility_pct = (
+        rolling_std_7
+        / rolling_mean_7
+    ) * 100
+
+    risk_score = 0
+
+    if demand_change_pct > 20:
+        risk_score += 2
+    elif demand_change_pct > 10:
+        risk_score += 1
+
+    if forecast_vs_recent_pct > 20:
+        risk_score += 2
+    elif forecast_vs_recent_pct > 10:
+        risk_score += 1
+
+    if volatility_pct > 40:
+        risk_score += 2
+    elif volatility_pct > 25:
+        risk_score += 1
+
+    if risk_score >= 4:
+        risk_level = "High"
+    elif risk_score >= 2:
+        risk_level = "Medium"
+    else:
+        risk_level = "Low"
+
+    if risk_level == "High":
+
+        if volatility_pct > 40:
+            risk_type = "High Demand Volatility"
+
+        elif demand_trend == "Increasing":
+            risk_type = "Rising Demand Risk"
+
+        else:
+            risk_type = "Inventory Pressure"
+
+    elif risk_level == "Medium":
+
+        if demand_trend == "Increasing":
+            risk_type = "Increasing Demand"
+
+        elif volatility_pct > 25:
+            risk_type = "Demand Volatility"
+
+        else:
+            risk_type = "Moderate Inventory Risk"
+
+    else:
+        risk_type = "Stable Demand"
+
+    if risk_level == "High":
+
+        recommendation = (
+            "Increase inventory coverage and closely monitor "
+            "demand to reduce the risk of stockouts."
+        )
+
+    elif risk_level == "Medium":
+
+        recommendation = (
+            "Consider maintaining additional inventory coverage "
+            "while monitoring recent demand behaviour."
+        )
+
+    else:
+
+        recommendation = (
+            "Maintain normal inventory coverage and continue "
+            "monitoring recent demand behaviour."
+        )
+
+    return {
+
+        "risk_level": risk_level,
+
+        "risk_score": int(
+            risk_score
+        ),
+
+        "risk_type": risk_type,
+
+        "demand_trend": demand_trend,
+
+        "demand_pressure": demand_pressure,
+
+        "demand_change_pct": round(
+            demand_change_pct,
+            2
+        ),
+
+        "forecast_vs_recent_pct": round(
+            forecast_vs_recent_pct,
+            2
+        ),
+
+        "lead_time_days": lead_time_days,
+
+        "lead_time_demand": round(
+            lead_time_demand,
+            2
+        ),
+
+        "safety_factor": safety_factor,
+
+        "safety_stock": round(
+            safety_stock,
+            2
+        ),
+
+        "recommended_inventory_target": round(
+            recommended_inventory_target,
+            2
+        ),
+
+        "volatility_pct": round(
+            volatility_pct,
+            2
+        ),
+
+        "rolling_mean_7": round(
+            rolling_mean_7,
+            2
+        ),
+
+        "rolling_mean_30": round(
+            rolling_mean_30,
+            2
+        ),
+
+        "rolling_std_7": round(
+            rolling_std_7,
+            2
+        ),
+
+        "predicted_units": round(
+            predicted_units,
+            2
+        ),
+
+        "data_limitation": (
+            "Inventory risk is estimated from demand behaviour "
+            "because the dataset does not contain actual "
+            "stock-on-hand quantities."
+        ),
+
+        "recommendation": recommendation
+    }
+
+
+# ============================================================
+# HOME DASHBOARD
+# ============================================================
 
 @app.route("/")
 def home():
@@ -43,7 +280,10 @@ def home():
     data = load_data()
 
     skus = sorted(
-        data["sku_id"].unique()
+        data["sku_id"]
+        .dropna()
+        .unique()
+        .tolist()
     )
 
     return render_template(
@@ -52,18 +292,14 @@ def home():
     )
 
 
-# ==========================================
+# ============================================================
 # ANALYTICS API
-# ==========================================
+# ============================================================
 
 @app.route("/analytics")
 def analytics():
 
     data = load_data()
-
-    # --------------------------------------
-    # MONTHLY ANALYTICS
-    # --------------------------------------
 
     monthly = (
         data.groupby(
@@ -81,11 +317,6 @@ def analytics():
         .dt.strftime("%Y-%m")
     )
 
-
-    # --------------------------------------
-    # CATEGORY ANALYTICS
-    # --------------------------------------
-
     category = (
         data.groupby("category")
         .agg(
@@ -98,11 +329,6 @@ def analytics():
             ascending=False
         )
     )
-
-
-    # --------------------------------------
-    # DEMAND DISTRIBUTION
-    # --------------------------------------
 
     demand_levels = pd.cut(
         data["units_sold"],
@@ -135,17 +361,13 @@ def analytics():
         .fillna(0)
     )
 
-
-    # --------------------------------------
-    # LATEST DATE
-    # --------------------------------------
+    first_date = data["date"].min()
 
     latest_date = data["date"].max()
 
-
-    # --------------------------------------
-    # KPI CALCULATIONS
-    # --------------------------------------
+    data_period_days = (
+        latest_date - first_date
+    ).days + 1
 
     total_units = int(
         data["units_sold"].sum()
@@ -163,12 +385,6 @@ def analytics():
         data["sku_id"].nunique()
     )
 
-
-    # --------------------------------------
-    # AI INSIGHT 1
-    # TOP CATEGORY
-    # --------------------------------------
-
     top_category_row = category.iloc[0]
 
     top_category = (
@@ -178,12 +394,6 @@ def analytics():
     top_category_units = int(
         top_category_row["units"]
     )
-
-
-    # --------------------------------------
-    # AI INSIGHT 2
-    # HIGHEST DEMAND MONTH
-    # --------------------------------------
 
     highest_month_row = monthly.loc[
         monthly["units"].idxmax()
@@ -197,12 +407,6 @@ def analytics():
         highest_month_row["units"]
     )
 
-
-    # --------------------------------------
-    # AI INSIGHT 3
-    # LOWEST DEMAND MONTH
-    # --------------------------------------
-
     lowest_month_row = monthly.loc[
         monthly["units"].idxmin()
     ]
@@ -215,12 +419,6 @@ def analytics():
         lowest_month_row["units"]
     )
 
-
-    # --------------------------------------
-    # AI INSIGHT 4
-    # MOST COMMON DEMAND LEVEL
-    # --------------------------------------
-
     dominant_demand = (
         demand_distribution.idxmax()
     )
@@ -229,24 +427,8 @@ def analytics():
         demand_distribution.max()
     )
 
-
-    # --------------------------------------
-    # AI INSIGHT 5
-    # DATA PERIOD
-    # --------------------------------------
-
-    first_date = data["date"].min()
-
-    data_period_days = (
-        latest_date - first_date
-    ).days + 1
-
-
-    # --------------------------------------
-    # MODEL PERFORMANCE
-    # --------------------------------------
-
     model_performance = {
+
         "models": [
             "MLP",
             "LSTM"
@@ -272,44 +454,80 @@ def analytics():
         "within_20": 60.59
     }
 
+    data_coverage = {
 
-    # --------------------------------------
-    # RETURN ANALYTICS
-    # --------------------------------------
+        "first_date":
+            first_date.strftime(
+                "%Y-%m-%d"
+            ),
+
+        "latest_date":
+            latest_date.strftime(
+                "%Y-%m-%d"
+            ),
+
+        "display_start":
+            first_date.strftime(
+                "%d %b %Y"
+            ),
+
+        "display_end":
+            latest_date.strftime(
+                "%d %b %Y"
+            ),
+
+        "data_period_days":
+            data_period_days,
+
+        "forecast_note":
+            "Forecasts are generated from the latest "
+            "available historical data."
+    }
 
     return jsonify({
 
-        "monthly": monthly.to_dict(
-            orient="records"
-        ),
+        "monthly":
+            monthly.to_dict(
+                orient="records"
+            ),
 
-        "category": category.to_dict(
-            orient="records"
-        ),
+        "category":
+            category.to_dict(
+                orient="records"
+            ),
 
         "demand_distribution": [
+
             {
                 "level": level,
                 "count": int(count)
             }
+
             for level, count
             in demand_distribution.items()
         ],
 
-        "latest_date": latest_date.strftime(
-            "%Y-%m-%d"
-        ),
+        "latest_date":
+            latest_date.strftime(
+                "%Y-%m-%d"
+            ),
+
+        "data_coverage":
+            data_coverage,
 
         "kpis": {
 
-            "total_units": total_units,
+            "total_units":
+                total_units,
 
-            "total_revenue": total_revenue,
+            "total_revenue":
+                total_revenue,
 
             "average_unit_price":
                 average_unit_price,
 
-            "unique_skus": unique_skus
+            "unique_skus":
+                unique_skus
         },
 
         "insights": {
@@ -357,9 +575,9 @@ def analytics():
     })
 
 
-# ==========================================
-# LSTM PREDICTION
-# ==========================================
+# ============================================================
+# DEMAND + INVENTORY PREDICTION API
+# ============================================================
 
 @app.route(
     "/predict",
@@ -367,115 +585,157 @@ def analytics():
 )
 def predict():
 
-    data = load_data()
+    try:
 
-    request_data = request.get_json()
+        data = load_data()
 
-    # --------------------------------------
-    # VALIDATE REQUEST
-    # --------------------------------------
+        request_data = request.get_json(
+            silent=True
+        )
 
-    if not request_data:
+        if not request_data:
+
+            return jsonify({
+                "error":
+                    "No prediction data received."
+            }), 400
+
+        sku = str(
+            request_data.get(
+                "sku",
+                ""
+            )
+        ).strip()
+
+        if not sku:
+
+            return jsonify({
+                "error":
+                    "Please select an SKU first."
+            }), 400
+
+        available_skus = set(
+            data["sku_id"]
+            .astype(str)
+            .str.strip()
+            .unique()
+        )
+
+        if sku not in available_skus:
+
+            return jsonify({
+                "error":
+                    "Invalid SKU selected: " + sku
+            }), 400
+
+        sku_data = (
+            data[
+                data["sku_id"]
+                .astype(str)
+                .str.strip()
+                == sku
+            ]
+            .sort_values("date")
+            .copy()
+        )
+
+        if sku_data.empty:
+
+            return jsonify({
+                "error":
+                    "No historical data found for " + sku
+            }), 400
+
+        prediction = predict_lstm_demand(
+            sku_data
+        )
+
+        predicted_units = max(
+            0,
+            round(
+                float(prediction)
+            )
+        )
+
+        demand_category = (
+            get_demand_category(
+                predicted_units
+            )
+        )
+
+        last_date = (
+            sku_data["date"].max()
+        )
+
+        forecast_date = (
+            last_date
+            + pd.Timedelta(days=1)
+        )
+
+        inventory_intelligence = (
+            calculate_inventory_intelligence(
+                sku_data=sku_data,
+                predicted_units=float(
+                    prediction
+                )
+            )
+        )
+
+        return jsonify({
+
+            "success": True,
+
+            "sku":
+                sku,
+
+            "last_date":
+                last_date.strftime(
+                    "%Y-%m-%d"
+                ),
+
+            "forecast_date":
+                forecast_date.strftime(
+                    "%Y-%m-%d"
+                ),
+
+            "predicted_units":
+                predicted_units,
+
+            "demand_category":
+                demand_category,
+
+            "inventory_intelligence":
+                inventory_intelligence
+        })
+
+    except Exception as error:
+
+        print(
+            "\n========== PREDICTION ERROR =========="
+        )
+
+        print(
+            repr(error)
+        )
+
+        print(
+            "======================================\n"
+        )
 
         return jsonify({
             "error":
-                "No prediction data received."
-        }), 400
+                "Prediction failed: " + str(error)
+        }), 500
 
 
-    sku = request_data.get(
-        "sku"
-    )
-
-
-    # --------------------------------------
-    # VALIDATE SKU
-    # --------------------------------------
-
-    if sku not in data["sku_id"].unique():
-
-        return jsonify({
-            "error":
-                "Invalid SKU selected."
-        }), 400
-
-
-    # --------------------------------------
-    # GET SKU HISTORY
-    # --------------------------------------
-
-    sku_data = (
-        data[
-            data["sku_id"] == sku
-        ]
-        .sort_values("date")
-        .copy()
-    )
-
-
-    # --------------------------------------
-    # GENERATE PREDICTION
-    # --------------------------------------
-
-    prediction = predict_lstm_demand(
-        sku_data
-    )
-
-    predicted_units = round(
-        prediction
-    )
-
-    demand_category = get_demand_category(
-        predicted_units
-    )
-
-
-    # --------------------------------------
-    # FORECAST DATE
-    # --------------------------------------
-
-    last_date = sku_data["date"].max()
-
-    forecast_date = (
-        last_date +
-        pd.Timedelta(days=1)
-    )
-
-
-    # --------------------------------------
-    # RETURN PREDICTION
-    # --------------------------------------
-
-    return jsonify({
-
-        "sku": sku,
-
-        "last_date":
-            last_date.strftime(
-                "%Y-%m-%d"
-            ),
-
-        "forecast_date":
-            forecast_date.strftime(
-                "%Y-%m-%d"
-            ),
-
-        "predicted_units":
-            predicted_units,
-
-        "demand_category":
-            demand_category
-    })
-
-
-# ==========================================
-# RUN FLASK APPLICATION
-# ==========================================
+# ============================================================
+# APPLICATION START
+# ============================================================
 
 if __name__ == "__main__":
 
     app.run(
+        host="127.0.0.1",
+        port=5000,
         debug=True
     )
-
-

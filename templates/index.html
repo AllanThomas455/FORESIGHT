@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,7 +11,7 @@
     >
 
     <title>
-        Customer Purchasing Behavior Dashboard
+        FORESIGHT | Demand &amp; Inventory Intelligence
     </title>
 
     <link
@@ -20,53 +19,53 @@
         href="{{ url_for('static', filename='css/style.css') }}"
     >
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
 
 
 <body>
 
 
-<!-- ==========================================
+<!-- =========================================================
      HEADER
-========================================== -->
+========================================================= -->
 
-<header class="dashboard-header">
+<header class="main-header">
 
     <div class="header-content">
 
-        <div>
+        <div class="brand-area">
 
             <div class="brand-name">
                 FORESIGHT
             </div>
 
             <h1>
-                Customer Purchasing Behavior Dashboard
+                Demand &amp; Inventory Intelligence Dashboard
             </h1>
 
             <p>
-                AI-Powered Demand Prediction & Customer Analytics
+                AI-Powered Demand Forecasting &amp; Inventory Decision Support
             </p>
 
         </div>
 
 
-        <div class="header-right">
+        <div class="system-status">
 
-            <div class="live-clock">
-
-                <span class="clock-label">
-                    SYSTEM TIME
-                </span>
-
-                <strong id="liveClock">
-                    --:--:--
-                </strong>
-
+            <div class="system-time-label">
+                SYSTEM TIME
             </div>
 
+            <div
+                id="systemTime"
+                class="system-time"
+            >
+                --:--:--
+            </div>
 
-            <div class="system-status">
+            <div class="system-online">
 
                 <span class="status-dot"></span>
 
@@ -82,197 +81,33 @@
 
 
 
-<!-- ==========================================
+<!-- =========================================================
      MAIN DASHBOARD
-========================================== -->
+========================================================= -->
 
 <main class="dashboard-container">
 
 
-<!-- ==========================================
-     KPI CARDS
-========================================== -->
+    <!-- =====================================================
+         BUSINESS OVERVIEW
+    ====================================================== -->
 
-<section class="kpi-grid">
+    <section class="dashboard-section">
 
-
-    <div class="kpi-card">
-
-        <div class="kpi-icon">
-            📦
-        </div>
-
-        <div>
-
-            <h3>
-                Total Units Sold
-            </h3>
-
-            <div
-                class="value"
-                id="totalUnits"
-            >
-                Loading...
-            </div>
-
-            <p class="kpi-subtext">
-                Across all products
-            </p>
-
-        </div>
-
-    </div>
-
-
-
-    <div class="kpi-card">
-
-        <div class="kpi-icon">
-            ₹
-        </div>
-
-        <div>
-
-            <h3>
-                Total Revenue
-            </h3>
-
-            <div
-                class="value"
-                id="totalRevenue"
-            >
-                Loading...
-            </div>
-
-            <p class="kpi-subtext">
-                Total sales revenue
-            </p>
-
-        </div>
-
-    </div>
-
-
-
-    <div class="kpi-card">
-
-        <div class="kpi-icon">
-            📈
-        </div>
-
-        <div>
-
-            <h3>
-                Average Unit Price
-            </h3>
-
-            <div
-                class="value"
-                id="averagePrice"
-            >
-                Loading...
-            </div>
-
-            <p class="kpi-subtext">
-                Average selling price
-            </p>
-
-        </div>
-
-    </div>
-
-
-
-    <div class="kpi-card">
-
-        <div class="kpi-icon">
-            🛍️
-        </div>
-
-        <div>
-
-            <h3>
-                Unique SKUs
-            </h3>
-
-            <div
-                class="value"
-                id="uniqueSkus"
-            >
-                Loading...
-            </div>
-
-            <p class="kpi-subtext">
-                Products analyzed
-            </p>
-
-        </div>
-
-    </div>
-
-
-</section>
-
-
-
-<!-- ==========================================
-     AI INSIGHTS
-========================================== -->
-
-<section class="dashboard-section ai-insights-section">
-
-
-    <div class="section-header">
-
-        <div>
-
-            <span class="section-label">
-                ARTIFICIAL INTELLIGENCE
-            </span>
-
-            <h2>
-                AI-Generated Business Insights
-            </h2>
-
-            <p>
-                Automated insights generated from historical
-                customer purchasing and product demand data.
-            </p>
-
-        </div>
-
-
-        <div class="ai-badge">
-            DATA INTELLIGENCE
-        </div>
-
-    </div>
-
-
-
-    <div class="insights-grid">
-
-
-        <!-- TOP CATEGORY -->
-
-        <div class="insight-card">
-
-            <div class="insight-icon">
-                🏆
-            </div>
+        <div class="section-header">
 
             <div>
 
-                <span class="insight-label">
-                    TOP CATEGORY
+                <span class="section-kicker">
+                    BUSINESS OVERVIEW
                 </span>
 
-                <h3 id="topCategory">
-                    Loading...
-                </h3>
+                <h2>
+                    Demand &amp; Sales Performance
+                </h2>
 
-                <p id="topCategoryText">
-                    Analyzing category demand...
+                <p>
+                    Key business indicators calculated from the available historical sales dataset.
                 </p>
 
             </div>
@@ -280,27 +115,150 @@
         </div>
 
 
+        <div class="kpi-grid">
 
-        <!-- HIGHEST MONTH -->
 
-        <div class="insight-card">
+            <div class="kpi-card">
 
-            <div class="insight-icon">
-                📈
+                <div class="kpi-icon">
+                    📦
+                </div>
+
+                <div class="kpi-content">
+
+                    <span class="kpi-label">
+                        Total Units Sold
+                    </span>
+
+                    <div
+                        id="totalUnits"
+                        class="kpi-value"
+                    >
+                        --
+                    </div>
+
+                    <span class="kpi-description">
+                        Total historical units sold
+                    </span>
+
+                </div>
+
             </div>
+
+
+
+            <div class="kpi-card">
+
+                <div class="kpi-icon">
+                    ₹
+                </div>
+
+                <div class="kpi-content">
+
+                    <span class="kpi-label">
+                        Total Revenue
+                    </span>
+
+                    <div
+                        id="totalRevenue"
+                        class="kpi-value"
+                    >
+                        --
+                    </div>
+
+                    <span class="kpi-description">
+                        Recorded sales revenue
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="kpi-card">
+
+                <div class="kpi-icon">
+                    📈
+                </div>
+
+                <div class="kpi-content">
+
+                    <span class="kpi-label">
+                        Average Unit Price
+                    </span>
+
+                    <div
+                        id="averagePrice"
+                        class="kpi-value"
+                    >
+                        --
+                    </div>
+
+                    <span class="kpi-description">
+                        Average selling price per unit
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="kpi-card">
+
+                <div class="kpi-icon">
+                    🛍️
+                </div>
+
+                <div class="kpi-content">
+
+                    <span class="kpi-label">
+                        SKUs Analyzed
+                    </span>
+
+                    <div
+                        id="totalSkus"
+                        class="kpi-value"
+                    >
+                        --
+                    </div>
+
+                    <span class="kpi-description">
+                        Products included in analysis
+                    </span>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         DATA COVERAGE
+    ====================================================== -->
+
+    <section class="dashboard-section">
+
+        <div class="section-header">
 
             <div>
 
-                <span class="insight-label">
-                    PEAK DEMAND
+                <span class="section-kicker">
+                    DATA COVERAGE
                 </span>
 
-                <h3 id="highestMonth">
-                    Loading...
-                </h3>
+                <h2>
+                    Data Coverage &amp; Forecasting Context
+                </h2>
 
-                <p id="highestMonthText">
-                    Analyzing monthly demand...
+                <p>
+                    Historical sales records used by FORESIGHT for demand analysis and forecasting.
                 </p>
 
             </div>
@@ -308,55 +266,334 @@
         </div>
 
 
+        <div class="coverage-panel">
 
-        <!-- LOWEST MONTH -->
 
-        <div class="insight-card">
+            <div class="coverage-title">
 
-            <div class="insight-icon">
-                📉
+                <span class="coverage-icon">
+                    📅
+                </span>
+
+                <div>
+
+                    <span class="small-label">
+                        HISTORICAL DATA
+                    </span>
+
+                    <h3>
+                        Available Sales History
+                    </h3>
+
+                </div>
+
             </div>
+
+
+
+            <div class="coverage-grid">
+
+
+                <div class="coverage-card">
+
+                    <span class="coverage-card-label">
+                        DATA COVERAGE
+                    </span>
+
+                    <div
+                        class="coverage-value coverage-range"
+                    >
+
+                        <span id="coverageStart">
+                            --
+                        </span>
+
+                        <span class="coverage-range-separator">
+                            –
+                        </span>
+
+                        <span id="coverageEnd">
+                            --
+                        </span>
+
+                    </div>
+
+                    <span class="coverage-description">
+                        Available historical sales period
+                    </span>
+
+                </div>
+
+
+
+                <div class="coverage-card">
+
+                    <span class="coverage-card-label">
+                        FIRST AVAILABLE DATA
+                    </span>
+
+                    <div
+                        id="firstDate"
+                        class="coverage-value"
+                    >
+                        --
+                    </div>
+
+                    <span class="coverage-description">
+                        Earliest historical observation
+                    </span>
+
+                </div>
+
+
+
+                <div class="coverage-card">
+
+                    <span class="coverage-card-label">
+                        LATEST AVAILABLE DATA
+                    </span>
+
+                    <div
+                        id="latestDate"
+                        class="coverage-value"
+                    >
+                        --
+                    </div>
+
+                    <span class="coverage-description">
+                        Latest historical observation
+                    </span>
+
+                </div>
+
+
+
+                <div class="coverage-card">
+
+                    <span class="coverage-card-label">
+                        HISTORICAL PERIOD
+                    </span>
+
+                    <div
+                        id="dataDays"
+                        class="coverage-value"
+                    >
+                        --
+                    </div>
+
+                    <span class="coverage-description">
+                        Total number of days covered
+                    </span>
+
+                </div>
+
+
+            </div>
+
+
+
+            <div class="forecast-note">
+
+                <div class="forecast-note-icon">
+                    ℹ️
+                </div>
+
+                <div>
+
+                    <strong>
+                        Forecasting Basis
+                    </strong>
+
+                    <p id="forecastNote">
+                        Forecasts are generated from the latest available historical demand data.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         AI BUSINESS INTELLIGENCE
+    ====================================================== -->
+
+    <section class="dashboard-section">
+
+        <div class="section-header">
 
             <div>
 
+                <span class="section-kicker">
+                    AI BUSINESS INTELLIGENCE
+                </span>
+
+                <h2>
+                    Demand Intelligence
+                </h2>
+
+                <p>
+                    Automated insights derived from historical demand, product and sales behaviour.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="insights-grid">
+
+
+            <div class="insight-card">
+
+                <div class="insight-top">
+
+                    <span class="insight-icon">
+                        🏆
+                    </span>
+
+                    <span class="insight-tag">
+                        FORESIGHT AI
+                    </span>
+
+                </div>
+
                 <span class="insight-label">
-                    LOWEST DEMAND
+                    HIGHEST DEMAND CATEGORY
+                </span>
+
+                <h3 id="highestCategory">
+                    --
+                </h3>
+
+                <p id="highestCategoryValue">
+                    --
+                </p>
+
+            </div>
+
+
+
+            <div class="insight-card">
+
+                <div class="insight-top">
+
+                    <span class="insight-icon">
+                        📈
+                    </span>
+
+                    <span class="insight-tag">
+                        FORESIGHT AI
+                    </span>
+
+                </div>
+
+                <span class="insight-label">
+                    PEAK DEMAND PERIOD
+                </span>
+
+                <h3 id="peakMonth">
+                    --
+                </h3>
+
+                <p id="peakMonthValue">
+                    --
+                </p>
+
+            </div>
+
+
+
+            <div class="insight-card">
+
+                <div class="insight-top">
+
+                    <span class="insight-icon">
+                        📉
+                    </span>
+
+                    <span class="insight-tag">
+                        FORESIGHT AI
+                    </span>
+
+                </div>
+
+                <span class="insight-label">
+                    LOWEST DEMAND PERIOD
                 </span>
 
                 <h3 id="lowestMonth">
-                    Loading...
+                    --
                 </h3>
 
-                <p id="lowestMonthText">
-                    Analyzing monthly demand...
+                <p id="lowestMonthValue">
+                    --
                 </p>
 
             </div>
 
-        </div>
 
 
+            <div class="insight-card">
 
-        <!-- DEMAND LEVEL -->
+                <div class="insight-top">
 
-        <div class="insight-card">
+                    <span class="insight-icon">
+                        🧠
+                    </span>
 
-            <div class="insight-icon">
-                🧠
-            </div>
+                    <span class="insight-tag">
+                        FORESIGHT AI
+                    </span>
 
-            <div>
+                </div>
 
                 <span class="insight-label">
-                    DOMINANT DEMAND
+                    DOMINANT DEMAND LEVEL
                 </span>
 
                 <h3 id="dominantDemand">
-                    Loading...
+                    --
                 </h3>
 
-                <p id="dominantDemandText">
-                    Analyzing demand distribution...
+                <p id="dominantDemandValue">
+                    --
+                </p>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         PREDICTIVE ANALYTICS
+    ====================================================== -->
+
+    <section class="dashboard-section">
+
+        <div class="section-header">
+
+            <div>
+
+                <span class="section-kicker">
+                    PREDICTIVE ANALYTICS
+                </span>
+
+                <h2>
+                    SKU Demand Forecast &amp; Inventory Intelligence
+                </h2>
+
+                <p>
+                    Generate a next-day demand forecast and demand-based inventory intelligence for any available SKU.
                 </p>
 
             </div>
@@ -364,365 +601,620 @@
         </div>
 
 
-    </div>
-
-</section>
+        <div class="prediction-panel">
 
 
+            <div class="prediction-header">
 
-<!-- ==========================================
-     AI DEMAND PREDICTION
-========================================== -->
+                <div class="prediction-title">
 
-<section class="dashboard-section prediction-section">
+                    <span class="prediction-icon">
+                        🔮
+                    </span>
 
+                    <div>
 
-    <div class="section-header">
+                        <span class="small-label">
+                            LSTM FORECAST
+                        </span>
 
-        <div>
+                        <h3>
+                            Next-Day Demand Prediction
+                        </h3>
 
-            <span class="section-label">
-                ARTIFICIAL INTELLIGENCE
-            </span>
+                    </div>
 
-            <h2>
-                AI Demand Prediction
-            </h2>
+                </div>
 
-            <p>
-                Select a product to generate an LSTM-based
-                next-day demand forecast.
-            </p>
-
-        </div>
-
-
-        <div class="ai-badge">
-            LSTM MODEL
-        </div>
-
-    </div>
+            </div>
 
 
 
-    <div class="prediction-controls">
+            <div class="prediction-controls">
 
-        <div class="input-group">
+                <div class="form-group">
 
-            <label for="sku">
-                Select SKU
-            </label>
+                    <label for="sku">
+                        Select SKU
+                    </label>
 
-            <select
-                id="sku"
-                name="sku"
+                    <select id="sku">
+
+                        <option value="">
+                            Select an SKU
+                        </option>
+
+                        {% for sku_item in skus %}
+
+                            <option value="{{ sku_item }}">
+                                {{ sku_item }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+
+                <button
+                    id="predictButton"
+                    class="predict-button"
+                    type="button"
+                >
+                    Predict Demand
+                </button>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 PREDICTION RESULT
+            ================================================== -->
+
+            <div
+                id="predictionResult"
+                class="prediction-result"
             >
 
-                {% for sku in skus %}
+                <div class="prediction-placeholder">
 
-                    <option value="{{ sku }}">
-                        {{ sku }}
-                    </option>
+                    <span class="placeholder-icon">
+                        📊
+                    </span>
 
-                {% endfor %}
+                    <h3>
+                        Forecast Ready
+                    </h3>
 
-            </select>
+                    <p>
+                        Select an SKU and generate a next-day demand forecast.
+                    </p>
 
-        </div>
-
-
-        <button
-            id="predictButton"
-            type="button"
-        >
-            Predict Demand
-        </button>
-
-    </div>
-
-
-
-    <div id="predictionResult"></div>
-
-
-</section>
-
-
-
-<!-- ==========================================
-     DEMAND ANALYTICS
-========================================== -->
-
-<section class="dashboard-section">
-
-
-    <div class="section-header">
-
-        <div>
-
-            <span class="section-label">
-                DEMAND ANALYTICS
-            </span>
-
-            <h2>
-                Purchasing Demand Trends
-            </h2>
-
-            <p>
-                Historical purchasing patterns across
-                the available sales period.
-            </p>
-
-        </div>
-
-
-        <div class="analytics-date">
-
-            Latest Data
-
-            <strong id="latestDataDate">
-                Loading...
-            </strong>
-
-        </div>
-
-    </div>
-
-
-
-    <!-- MONTHLY -->
-
-    <div class="analytics-card">
-
-        <div class="analytics-card-header">
-
-            <div>
-
-                <h3>
-                    Monthly Units Sold
-                </h3>
-
-                <p>
-                    Total units sold by month
-                </p>
+                </div>
 
             </div>
 
+
+            <!-- =================================================
+                 PREDICTION DETAILS
+            ================================================== -->
+
+            <div
+                id="predictionDetails"
+                class="prediction-details"
+                style="display: none;"
+            >
+
+                <div class="prediction-summary">
+
+                    <div class="prediction-main-card">
+
+                        <span class="prediction-card-label">
+                            SELECTED SKU
+                        </span>
+
+                        <strong id="predictionSku">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div class="prediction-main-card">
+
+                        <span class="prediction-card-label">
+                            PREDICTED UNITS
+                        </span>
+
+                        <strong id="predictedUnits">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div class="prediction-main-card">
+
+                        <span class="prediction-card-label">
+                            DEMAND CATEGORY
+                        </span>
+
+                        <strong id="demandCategory">
+                            --
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="prediction-summary">
+
+                    <div class="prediction-main-card">
+
+                        <span class="prediction-card-label">
+                            LAST AVAILABLE DATE
+                        </span>
+
+                        <strong id="lastAvailableDate">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div class="prediction-main-card">
+
+                        <span class="prediction-card-label">
+                            FORECAST DATE
+                        </span>
+
+                        <strong id="forecastDate">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div class="prediction-main-card">
+
+                        <span class="prediction-card-label">
+                            RISK LEVEL
+                        </span>
+
+                        <strong id="riskLevel">
+                            --
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="prediction-summary">
+
+                    <div class="prediction-main-card">
+
+                        <span class="prediction-card-label">
+                            RISK SCORE
+                        </span>
+
+                        <strong id="riskScore">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div class="prediction-main-card">
+
+                        <span class="prediction-card-label">
+                            DEMAND TREND
+                        </span>
+
+                        <strong id="demandTrend">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div class="prediction-main-card">
+
+                        <span class="prediction-card-label">
+                            DEMAND PRESSURE
+                        </span>
+
+                        <strong id="demandPressure">
+                            --
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="prediction-summary">
+
+                    <div class="prediction-main-card">
+
+                        <span class="prediction-card-label">
+                            7-DAY DEMAND
+                        </span>
+
+                        <strong id="sevenDayDemand">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div class="prediction-main-card">
+
+                        <span class="prediction-card-label">
+                            SAFETY STOCK
+                        </span>
+
+                        <strong id="safetyStock">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div class="prediction-main-card">
+
+                        <span class="prediction-card-label">
+                            RECOMMENDED INVENTORY
+                        </span>
+
+                        <strong id="recommendedInventory">
+                            --
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="prediction-summary">
+
+                    <div class="prediction-main-card">
+
+                        <span class="prediction-card-label">
+                            DEMAND VOLATILITY
+                        </span>
+
+                        <strong id="demandVolatility">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div class="prediction-main-card">
+
+                        <span class="prediction-card-label">
+                            RECENT DEMAND CHANGE
+                        </span>
+
+                        <strong id="recentDemandChange">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div class="prediction-main-card">
+
+                        <span class="prediction-card-label">
+                            INVENTORY RISK
+                        </span>
+
+                        <strong id="inventoryRiskType">
+                            --
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="inventory-recommendation">
+
+                    <span class="prediction-card-label">
+                        INVENTORY RECOMMENDATION
+                    </span>
+
+                    <p id="inventoryRecommendation">
+                        --
+                    </p>
+
+                </div>
+
+
+
+                <div class="inventory-limitation">
+
+                    <span class="prediction-card-label">
+                        DATA LIMITATION
+                    </span>
+
+                    <p id="inventoryDataLimitation">
+                        --
+                    </p>
+
+                </div>
+
+            </div>
+
+
         </div>
 
-
-        <div class="chart-container">
-
-            <canvas
-                id="monthlyDemandChart"
-            ></canvas>
-
-        </div>
-
-    </div>
+    </section>
 
 
 
-    <!-- CATEGORY + DISTRIBUTION -->
+    <!-- =====================================================
+         DEMAND & SALES ANALYTICS
+    ====================================================== -->
 
-    <div class="analytics-grid">
+    <section class="dashboard-section analytics-section">
 
 
-        <div class="analytics-card">
+        <div class="analytics-header">
 
-            <div class="analytics-card-header">
+
+            <div class="analytics-heading">
 
                 <div>
 
-                    <h3>
+                    <span class="section-kicker">
+                        DEMAND ANALYTICS
+                    </span>
+
+                    <h2>
+                        Demand &amp; Sales Analytics
+                    </h2>
+
+                    <p>
+                        Historical demand patterns across the available sales period and product categories.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="latest-data">
+
+                <span>
+                    LATEST DATA
+                </span>
+
+                <strong id="latestDataDate">
+                    --
+                </strong>
+
+            </div>
+
+
+        </div>
+
+
+
+        <div class="analytics-summary">
+
+
+            <div class="analytics-summary-item">
+
+                <span class="analytics-summary-icon">
+                    📅
+                </span>
+
+                <div>
+
+                    <span class="analytics-summary-label">
+                        HISTORICAL TREND
+                    </span>
+
+                    <strong>
+                        Monthly Demand
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="analytics-summary-item">
+
+                <span class="analytics-summary-icon">
+                    🏷️
+                </span>
+
+                <div>
+
+                    <span class="analytics-summary-label">
+                        PRODUCT ANALYSIS
+                    </span>
+
+                    <strong>
                         Category Demand
-                    </h3>
-
-                    <p>
-                        Units sold by product category
-                    </p>
+                    </strong>
 
                 </div>
 
             </div>
 
 
-            <div class="chart-container small-chart">
 
-                <canvas
-                    id="categoryChart"
-                ></canvas>
+            <div class="analytics-summary-item">
 
-            </div>
-
-        </div>
-
-
-
-        <div class="analytics-card">
-
-            <div class="analytics-card-header">
+                <span class="analytics-summary-icon">
+                    🧠
+                </span>
 
                 <div>
 
-                    <h3>
-                        Demand Distribution
-                    </h3>
+                    <span class="analytics-summary-label">
+                        DEMAND CLASSIFICATION
+                    </span>
 
-                    <p>
-                        Distribution of demand levels
-                    </p>
+                    <strong>
+                        Demand Levels
+                    </strong>
 
                 </div>
 
             </div>
 
 
-            <div class="chart-container small-chart">
+        </div>
 
-                <canvas
-                    id="demandDistributionChart"
-                ></canvas>
+
+
+        <div class="analytics-grid">
+
+
+            <div class="chart-card chart-wide">
+
+                <div class="chart-card-header">
+
+                    <div>
+
+                        <span class="chart-kicker">
+                            HISTORICAL TREND
+                        </span>
+
+                        <h3>
+                            Monthly Demand Trend
+                        </h3>
+
+                        <p>
+                            Total units sold across each month
+                        </p>
+
+                    </div>
+
+                    <div class="chart-header-icon">
+                        📈
+                    </div>
+
+                </div>
+
+
+                <div class="chart-container">
+
+                    <canvas id="monthlyDemandChart"></canvas>
+
+                </div>
 
             </div>
 
-        </div>
 
 
-    </div>
+            <div class="chart-card">
+
+                <div class="chart-card-header">
+
+                    <div>
+
+                        <span class="chart-kicker">
+                            CATEGORY ANALYSIS
+                        </span>
+
+                        <h3>
+                            Category-wise Demand
+                        </h3>
+
+                        <p>
+                            Total units sold by product category
+                        </p>
+
+                    </div>
+
+                    <div class="chart-header-icon">
+                        🏷️
+                    </div>
+
+                </div>
 
 
-</section>
+                <div class="chart-container">
 
+                    <canvas id="categoryDemandChart"></canvas>
 
-
-<!-- ==========================================
-     MODEL PERFORMANCE ANALYSIS
-========================================== -->
-
-<section class="dashboard-section model-performance-section">
-
-
-    <div class="section-header">
-
-        <div>
-
-            <span class="section-label">
-                MODEL ANALYTICS
-            </span>
-
-            <h2>
-                Model Performance Analysis
-            </h2>
-
-            <p>
-                Comparative evaluation of the MLP and LSTM
-                demand forecasting models.
-            </p>
-
-        </div>
-
-
-        <div class="ai-badge">
-            MODEL COMPARISON
-        </div>
-
-    </div>
-
-
-
-    <!-- MODEL COMPARISON CHART -->
-
-    <div class="analytics-card performance-chart-card">
-
-        <div class="analytics-card-header">
-
-            <div>
-
-                <h3>
-                    Model Error Comparison
-                </h3>
-
-                <p>
-                    Lower MAE and RMSE values indicate smaller
-                    prediction errors.
-                </p>
+                </div>
 
             </div>
 
-        </div>
 
 
-        <div class="chart-container performance-chart">
+            <div class="chart-card">
 
-            <canvas
-                id="modelErrorChart"
-            ></canvas>
+                <div class="chart-card-header">
 
-        </div>
+                    <div>
 
-    </div>
+                        <span class="chart-kicker">
+                            DEMAND LEVEL DISTRIBUTION
+                        </span>
+
+                        <h3>
+                            Demand Level Distribution
+                        </h3>
+
+                        <p>
+                            Distribution of Low, Medium, High and Very High demand
+                        </p>
+
+                    </div>
+
+                    <div class="chart-header-icon">
+                        🧠
+                    </div>
+
+                </div>
 
 
+                <div class="chart-container chart-small">
 
-    <!-- R2 CHART -->
+                    <canvas id="demandDistributionChart"></canvas>
 
-    <div class="analytics-card performance-chart-card">
-
-        <div class="analytics-card-header">
-
-            <div>
-
-                <h3>
-                    R² Score Comparison
-                </h3>
-
-                <p>
-                    R² indicates how much variation in demand
-                    is explained by the model.
-                </p>
+                </div>
 
             </div>
 
-        </div>
-
-
-        <div class="chart-container performance-chart">
-
-            <canvas
-                id="modelR2Chart"
-            ></canvas>
 
         </div>
 
-    </div>
 
 
+        <div class="analytics-footer">
 
-    <!-- ACCURACY CARDS -->
-
-    <div class="prediction-accuracy-grid">
-
-
-        <div class="accuracy-card">
-
-            <div class="accuracy-icon">
-                🎯
+            <div class="analytics-footer-icon">
+                💡
             </div>
 
             <div>
 
-                <span class="accuracy-label">
-                    WITHIN ±10%
-                </span>
-
-                <strong id="within10Accuracy">
-                    --
+                <strong>
+                    Analytics Context
                 </strong>
 
                 <p>
-                    Predictions falling within 10%
-                    of actual demand.
+                    These visualizations summarize historical units sold across time, product categories and demand levels to support data-driven demand planning.
                 </p>
 
             </div>
@@ -730,26 +1222,30 @@
         </div>
 
 
+    </section>
 
-        <div class="accuracy-card">
 
-            <div class="accuracy-icon">
-                📊
-            </div>
+
+    <!-- =====================================================
+         MACHINE LEARNING
+    ====================================================== -->
+
+    <section class="dashboard-section">
+
+        <div class="section-header">
 
             <div>
 
-                <span class="accuracy-label">
-                    WITHIN ±20%
+                <span class="section-kicker">
+                    MACHINE LEARNING
                 </span>
 
-                <strong id="within20Accuracy">
-                    --
-                </strong>
+                <h2>
+                    Forecasting Model Performance
+                </h2>
 
                 <p>
-                    Predictions falling within 20%
-                    of actual demand.
+                    Comparative evaluation of the MLP and LSTM models used for demand forecasting.
                 </p>
 
             </div>
@@ -757,252 +1253,375 @@
         </div>
 
 
-    </div>
+
+        <div class="model-charts-grid">
+
+
+            <div class="chart-card">
+
+                <div class="chart-card-header">
+
+                    <div>
+
+                        <span class="chart-kicker">
+                            MODEL VALIDATION
+                        </span>
+
+                        <h3>
+                            Forecast Error Comparison
+                        </h3>
+
+                        <p>
+                            MAE and RMSE measure prediction error.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="chart-container">
+
+                    <canvas id="modelErrorChart"></canvas>
+
+                </div>
+
+            </div>
 
 
 
-    <!-- MODEL CARDS -->
+            <div class="chart-card">
 
-    <div class="model-grid">
+                <div class="chart-card-header">
+
+                    <div>
+
+                        <span class="chart-kicker">
+                            MODEL VALIDATION
+                        </span>
+
+                        <h3>
+                            Model Fit (R²) Comparison
+                        </h3>
+
+                        <p>
+                            R² represents the proportion of demand variation explained by each model.
+                        </p>
+
+                    </div>
+
+                </div>
 
 
-        <!-- MLP -->
+                <div class="chart-container">
 
-        <div class="model-card">
+                    <canvas id="modelR2Chart"></canvas>
 
-            <div class="model-card-header">
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+        <div class="accuracy-grid">
+
+
+            <div class="accuracy-card">
+
+                <div class="accuracy-icon">
+                    🎯
+                </div>
 
                 <div>
 
-                    <h3>
-                        MLP
-                    </h3>
+                    <span class="accuracy-label">
+                        WITHIN ±10%
+                    </span>
+
+                    <strong id="within10Accuracy">
+                        --
+                    </strong>
 
                     <p>
-                        Multi-Layer Perceptron
+                        Forecasts within 10% of actual demand.
                     </p>
 
                 </div>
 
-
-                <span class="model-type">
-                    STATIC
-                </span>
-
             </div>
 
 
 
-            <div class="metrics">
+            <div class="accuracy-card">
 
-
-                <div class="metric">
-
-                    <span>
-                        MAE
-                    </span>
-
-                    <strong>
-                        2.5930
-                    </strong>
-
+                <div class="accuracy-icon">
+                    📊
                 </div>
-
-
-
-                <div class="metric">
-
-                    <span>
-                        RMSE
-                    </span>
-
-                    <strong>
-                        3.6788
-                    </strong>
-
-                </div>
-
-
-
-                <div class="metric">
-
-                    <span>
-                        R² Score
-                    </span>
-
-                    <strong>
-                        0.7595
-                    </strong>
-
-                </div>
-
-
-            </div>
-
-        </div>
-
-
-
-        <!-- LSTM -->
-
-        <div class="model-card">
-
-            <div class="model-card-header">
 
                 <div>
 
-                    <h3>
-                        LSTM
-                    </h3>
+                    <span class="accuracy-label">
+                        WITHIN ±20%
+                    </span>
+
+                    <strong id="within20Accuracy">
+                        --
+                    </strong>
 
                     <p>
-                        Long Short-Term Memory
+                        Forecasts within 20% of actual demand.
                     </p>
 
                 </div>
 
+            </div>
 
-                <span class="model-type">
-                    TIME SERIES
+
+        </div>
+
+
+
+        <div class="model-grid">
+
+
+            <div class="model-card">
+
+                <div class="model-card-header">
+
+                    <div>
+
+                        <span class="model-badge">
+                            STATIC MODEL
+                        </span>
+
+                        <h3>
+                            MLP
+                        </h3>
+
+                        <p>
+                            Multi-Layer Perceptron
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="model-metrics">
+
+                    <div>
+
+                        <span>
+                            MAE
+                        </span>
+
+                        <strong>
+                            2.5930
+                        </strong>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            RMSE
+                        </span>
+
+                        <strong>
+                            3.6788
+                        </strong>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            R² Score
+                        </span>
+
+                        <strong>
+                            0.7595
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="model-card model-card-featured">
+
+                <div class="model-card-header">
+
+                    <div>
+
+                        <span class="model-badge">
+                            TIME-SERIES MODEL
+                        </span>
+
+                        <h3>
+                            LSTM
+                        </h3>
+
+                        <p>
+                            Long Short-Term Memory
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="model-metrics">
+
+                    <div>
+
+                        <span>
+                            MAE
+                        </span>
+
+                        <strong>
+                            2.4356
+                        </strong>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            RMSE
+                        </span>
+
+                        <strong>
+                            3.6284
+                        </strong>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            R² Score
+                        </span>
+
+                        <strong>
+                            0.7661
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         FORESIGHT INTELLIGENCE
+    ====================================================== -->
+
+    <section class="dashboard-section">
+
+        <div class="foresight-intelligence">
+
+
+            <div class="foresight-icon">
+                🧠
+            </div>
+
+
+            <div>
+
+                <span class="section-kicker">
+                    FORESIGHT AI
                 </span>
 
+                <h2>
+                    FORESIGHT Intelligence
+                </h2>
+
+                <p>
+                    FORESIGHT combines historical demand patterns, product information, pricing, promotions and temporal behaviour to generate SKU-level next-day demand forecasts and demand-based inventory intelligence for business planning.
+                </p>
+
+
+                <div class="intelligence-tags">
+
+                    <span>
+                        Demand Forecasting
+                    </span>
+
+                    <span>
+                        SKU Analytics
+                    </span>
+
+                    <span>
+                        Inventory Planning
+                    </span>
+
+                    <span>
+                        AI Decision Support
+                    </span>
+
+                </div>
+
             </div>
 
 
-
-            <div class="metrics">
-
-
-                <div class="metric">
-
-                    <span>
-                        MAE
-                    </span>
-
-                    <strong>
-                        2.4356
-                    </strong>
-
-                </div>
-
-
-
-                <div class="metric">
-
-                    <span>
-                        RMSE
-                    </span>
-
-                    <strong>
-                        3.6284
-                    </strong>
-
-                </div>
-
-
-
-                <div class="metric">
-
-                    <span>
-                        R² Score
-                    </span>
-
-                    <strong>
-                        0.7661
-                    </strong>
-
-                </div>
-
-
-            </div>
-
         </div>
 
-
-    </div>
-
-
-</section>
-
-
-
-<!-- ==========================================
-     FORECASTING INTELLIGENCE
-========================================== -->
-
-<section class="dashboard-section model-summary">
-
-
-    <div class="summary-content">
-
-        <div class="summary-icon">
-            🧠
-        </div>
-
-
-        <div>
-
-            <span class="section-label summary-label">
-                FORESIGHT AI
-            </span>
-
-            <h2>
-                Forecasting Intelligence
-            </h2>
-
-            <p>
-                The system analyzes historical purchasing
-                patterns, product information, pricing,
-                promotions and temporal demand behavior
-                to generate next-day demand predictions.
-            </p>
-
-        </div>
-
-    </div>
-
-
-</section>
+    </section>
 
 
 </main>
 
 
 
-<!-- ==========================================
+<!-- =========================================================
      FOOTER
-========================================== -->
+========================================================= -->
 
-<footer>
+<footer class="main-footer">
 
-    <p>
-        FORESIGHT • AI-Powered Customer Demand Analytics
-    </p>
+    <div>
+
+        <strong>
+            FORESIGHT
+        </strong>
+
+        <span>
+            •
+        </span>
+
+        <span>
+            AI-Powered Demand &amp; Inventory Intelligence
+        </span>
+
+    </div>
 
 </footer>
 
 
 
-<!-- ==========================================
-     CHART.JS
-========================================== -->
-
-<script
-    src="https://cdn.jsdelivr.net/npm/chart.js"
-></script>
-
-
-
-<!-- ==========================================
+<!-- =========================================================
      DASHBOARD JAVASCRIPT
-========================================== -->
+========================================================= -->
 
 <script
-    src="{{ url_for('static', filename='js/dashboard.js') }}"
+    src="{{ url_for('static', filename='js/dashboard.js') }}?v=20260919"
 ></script>
 
 
 </body>
 
 </html>
-```
