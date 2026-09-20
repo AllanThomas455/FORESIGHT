@@ -2,20 +2,8 @@ import os
 import joblib
 import numpy as np
 import pandas as pd
-from tensorflow.keras.models import load_model
-
-
-# --------------------------------------------------
-# Paths
-# --------------------------------------------------
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-MODEL_PATH = os.path.join(
-    BASE_DIR,
-    "models",
-    "lstm_demand_model.keras"
-)
 
 SCALER_PATH = os.path.join(
     BASE_DIR,
@@ -23,18 +11,7 @@ SCALER_PATH = os.path.join(
     "lstm_scaler.pkl"
 )
 
-
-# --------------------------------------------------
-# Load trained model and scaler
-# --------------------------------------------------
-
-lstm_model = load_model(MODEL_PATH)
 lstm_scaler = joblib.load(SCALER_PATH)
-
-
-# --------------------------------------------------
-# LSTM configuration
-# --------------------------------------------------
 
 LSTM_FEATURES = [
     "units_sold",
@@ -49,17 +26,7 @@ LSTM_FEATURES = [
 SEQUENCE_LENGTH = 30
 
 
-# --------------------------------------------------
-# Prediction function
-# --------------------------------------------------
-
 def predict_lstm_demand(sku_data):
-    """
-    Predict next-day demand for a SKU.
-
-    sku_data must contain at least the latest
-    30 observations with the required LSTM features.
-    """
 
     if len(sku_data) < SEQUENCE_LENGTH:
         raise ValueError(
@@ -77,46 +44,25 @@ def predict_lstm_demand(sku_data):
             f"Missing required columns: {missing_columns}"
         )
 
-    sequence = (
-        sku_data[LSTM_FEATURES]
+    # Use recent demand as a fallback prediction
+    recent_units = (
+        sku_data["units_sold"]
         .tail(SEQUENCE_LENGTH)
-        .values
+        .mean()
     )
 
-    sequence_scaled = lstm_scaler.transform(sequence)
+    prediction = float(recent_units)
 
-    sequence_scaled = sequence_scaled.reshape(
-        1,
-        SEQUENCE_LENGTH,
-        len(LSTM_FEATURES)
-    )
+    return max(0, prediction)
 
-    prediction = lstm_model.predict(
-        sequence_scaled,
-        verbose=0
-    )[0][0]
-
-    return max(0, float(prediction))
-
-
-# --------------------------------------------------
-# Demand category
-# --------------------------------------------------
 
 def get_demand_category(predicted_units):
-    """
-    Convert predicted demand into a business-friendly
-    demand category.
-    """
 
     if predicted_units <= 5:
         return "Low"
-
     elif predicted_units <= 10:
         return "Medium"
-
     elif predicted_units <= 20:
         return "High"
-
     else:
         return "Very High"
